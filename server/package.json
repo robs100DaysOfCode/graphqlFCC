@@ -11,6 +11,9 @@
     "express-graphql": "^0.6.12",
     "graphiql": "^0.11.11",
     "graphql": "^0.13.2",
-    "nodemon": "^1.18.3"
+    "loadash": "^1.0.0",
+    "nodemon": "^1.18.3",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
   }
 }
