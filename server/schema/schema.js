@@ -1,16 +1,25 @@
 const graphql = require('graphql');
-const _ = require('lodash');
-const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLID, GraphQLInt  } = graphql; // ES^ destructuring
+const _ = require('lodash'); // used for utility functions in js arrays and objects
+const { GraphQLObjectType,
+  GraphQLString,
+   GraphQLSchema,
+   GraphQLID,
+   GraphQLInt,
+    GraphQLList } = graphql; // ES^ destructuring
 
 var books  = [
     {name:'Harry Potter and the Prisoner of Azkaban', genre:'Fiction', id:'1', authorId:'1'},
     {name:'God Father', genre:'Drama', id:'2', authorId:'2'},
-    {name:'NottingHill with Love', genre:'Fiction', id:'3', authorId:'3'},
+    {name:'NottingHill with Love', genre:'Romantic', id:'3', authorId:'3'},
+    {name:'The Shining', genre:'Horror', id:'4', authorId:'5'},
+    {name:'Noddy', genre:'Childrens', id:'5', authorId:'4'},
+    {name:'How to Win Over People', genre:'Self Help', id:'6', authorId:'6'},
+    {name:'IT', genre:'Horror Adventure', id:'7', authorId:'5'}
 ];
 
 const BookType = new GraphQLObjectType({
     name: 'Book',
-    fields: () => ({
+    fields: () => ({ // its of function type as we are not executing code unless needed
         id: { type: GraphQLID },
         name: { type: GraphQLString },
         genre: { type: GraphQLString },
@@ -27,6 +36,9 @@ var authors = [
     {name: 'J.K Rowling',  age: 55, id:'1'},
     {name: 'Mario Puzo',  age: 78, id:'2'},
     {name: 'Palo Colhio',  age: 60, id:'3'},
+    {name: 'Enid Blyton',  age: 71, id:'4'},
+    {name: 'Stephen King',  age: 95, id:'5'},
+    {name: 'Robert C Dini',  age: 82, id:'6'},
 ]
 
 const AuthorType = new GraphQLObjectType({
@@ -34,7 +46,15 @@ const AuthorType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        age: { type: GraphQLInt }
+        age: { type: GraphQLInt },
+        books: {
+          type: new GraphQLList(BookType),
+          resolve(parent, args){
+            // find every book in book array with the current author id //
+            return _.filter(books, {authorId: parent.id})
+            // check for all books find books wiht authorId as parentID
+          }
+        }
     })
 })
 
@@ -57,6 +77,18 @@ const RootQuery = new GraphQLObjectType({
                 // code to get data from db or any other source will come here
                 return _.find(authors, { id: args.id })
             }
+        },
+        books: {
+          type: new GraphQLList(BookType),
+          resolve(parents, args){
+            return books
+          }
+        },
+        authors: {
+          type: new GraphQLList(AuthorType),
+          resolve(parents, args){
+            return authors
+          }
         }
     }
 })
