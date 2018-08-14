@@ -96,8 +96,30 @@ const RootQuery = new GraphQLObjectType({
     }
 })
 
+// how to modify the data in all ases of CRUD
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        name: { type: GraphQLString},
+        age: { type: GraphQLInt }
+      },
+      resolve(parent, args){
+        let author = new Author({
+          name: args.name,
+          age: args.age
+        });
+        //saving the author instance to Database
+        return author.save()
+      }
+    }
+  }
+})
 
 module.exports = new GraphQLSchema({
     // intial root query
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutation // modify the database as well while oing the query if needed
 })
